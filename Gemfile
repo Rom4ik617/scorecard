@@ -69,3 +69,5 @@ group :test do
 end
 
 gem 'octokit'
+
+gem 'active_model_serializers'
