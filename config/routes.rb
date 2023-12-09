@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  root '/scorecard', to: 'scorecard#scorecard'
+  root to: 'scorecard#index'
 end

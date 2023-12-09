@@ -1,0 +1,7 @@
+<h1>Weekly Top Contributors</h1>
+
+<ol>
+  <% @top_contributors.each do |user, points| %>
+    <li><%= user %> - <%= points %> points</li>
+  <% end %>
+</ol>
