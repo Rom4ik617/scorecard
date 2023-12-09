@@ -1,31 +1,42 @@
 class ScorecardController < ApplicationController
   def index
-    @repository = 'Rom4ik617/scorecard'
+    @repository = 'ruby/ruby'
     @scoring_guidelines = {
       'PullRequestEvent' => 12,
       'PullRequestReviewCommentEvent' => 1,
       'PullRequestReviewEvent' => 3
     }
-    @top_contributors = fetch_top_contributors
+    @weekly_top_contributors = fetch_weekly_top_contributors
   end
 
   private
 
-  def fetch_top_contributors
-    client = Octokit::Client.new(access_token: ENV['GITHUB_ACCESS_TOKEN'])
+  def fetch_weekly_top_contributors
+    client = Octokit::Client.new
     events = client.repository_events(@repository)
 
-    contributors = Hash.new(0)
+    current_week_start = Time.now.beginning_of_week.strftime('%Y-%m-%d')
+    weekly_contributors = Hash.new { |hash, key| hash[key] = { total_points: 0, top_contributor: nil, event_points: Hash.new(0) } }
 
     events.each do |event|
-      event_type = event.type
       contributor = event.actor.login
+      week_start = event.created_at.beginning_of_week.strftime('%Y-%m-%d')
 
-      if @scoring_guidelines.key?(event_type)
-        contributors[contributor] += @scoring_guidelines[event_type]
+      if week_start == current_week_start
+        if @scoring_guidelines.key?(event.type)
+          points = @scoring_guidelines[event.type]
+          weekly_contributors[current_week_start][:total_points] += points
+          weekly_contributors[current_week_start][:event_points][contributor] += points
+        end
       end
     end
 
-    contributors.sort_by { |_user, points| points }.reverse.to_h
+    weekly_contributors.transform_values! do |data|
+      top_contributor = data[:event_points].max_by { |_user, points| points }
+      data[:top_contributor] = top_contributor[0] if top_contributor
+      data
+    end
+
+    weekly_contributors.sort_by { |week, data| data[:total_points] }.reverse.to_h
   end
 end

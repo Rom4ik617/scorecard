@@ -1,7 +1,18 @@
-<h1>Weekly Top Contributors</h1>
+<h1>Top Contributors for the Current Week</h1>
 
-<ol>
-  <% @top_contributors.each do |user, points| %>
-    <li><%= user %> - <%= points %> points</li>
-  <% end %>
-</ol>
+<% if @weekly_top_contributors.any? %>
+  <ol>
+    <% @weekly_top_contributors.each do |week, data| %>
+      <li>
+        Week starting <%= week %>:
+        <ul>
+          <% data[:event_points].sort_by { |_contributor, points| points }.reverse.first(3).each do |contributor, points| %>
+            <li><%= contributor %> - <%= points %> points</li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ol>
+<% else %>
+  <p>No events found for the current week.</p>
+<% end %>
