@@ -10,20 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_12_09_160321) do
-  create_table "contributors", force: :cascade do |t|
-    t.string "name"
+ActiveRecord::Schema[7.1].define(version: 2023_12_09_233803) do
+  create_table "weekly_contributors", force: :cascade do |t|
+    t.date "week_start"
+    t.string "contributor"
+    t.integer "points"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "events", force: :cascade do |t|
-    t.string "event_type"
-    t.integer "contributor_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["contributor_id"], name: "index_events_on_contributor_id"
-  end
-
-  add_foreign_key "events", "contributors"
 end
