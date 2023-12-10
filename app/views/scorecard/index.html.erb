@@ -1,7 +1,7 @@
 <div class="container">
   <h1 class="header">🔥 Top Contributors for the Current Week 🔥</h1>
 
-  <% if @weekly_contributors.any? %>
+  <% if @weekly_contributors.first.second[:top_contributors].any? %>
     <ol class="list">
       <% @weekly_contributors.each do |week, data| %>
         <li class="list-item">
