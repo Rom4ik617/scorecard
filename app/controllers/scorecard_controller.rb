@@ -16,15 +16,16 @@ class ScorecardController < ApplicationController
     events = client.repository_events(@repository)
 
     current_week_start = Time.now.beginning_of_week.strftime('%Y-%m-%d')
-    weekly_contributors = Hash.new { |hash, key| hash[key] = { total_points: 0, top_contributors: [], event_points: Hash.new(0) } }
+    weekly_contributors = Hash.new { |hash, key| hash[key] = { points: 0, top_contributors: [], event_points: Hash.new(0) } }
 
     events.each do |event|
       contributor = event.actor.login
       week_start = event.created_at.beginning_of_week.strftime('%Y-%m-%d')
+      binding.pry
 
       if week_start == current_week_start && @scoring_guidelines.key?(event.type)
         points = @scoring_guidelines[event.type]
-        weekly_contributors[current_week_start][:total_points] += points
+        weekly_contributors[current_week_start][:points] += points
         weekly_contributors[current_week_start][:event_points][contributor] += points
       end
     end
@@ -37,16 +38,18 @@ class ScorecardController < ApplicationController
 
     update_database(weekly_contributors[current_week_start])
 
-    weekly_contributors.sort_by { |week, data| data[:total_points] }.reverse.to_h
+    weekly_contributors.sort_by { |week, data| data[:points] }.reverse.to_h
   end
 
   def update_database(weekly_data)
-    weekly_data[:top_contributors].each do |contributor_data|
-      db_record = WeeklyContributor.find_or_create_by(week_start: Time.now.beginning_of_week, contributor: contributor_data[:contributor]) do |record|
-        record.points = 0
+    if weekly_data[:top_contributors].present?
+      weekly_data[:top_contributors].each do |contributor_data|
+        db_record = WeeklyContributor.find_or_create_by(week_start: Time.now.beginning_of_week, contributor: contributor_data[:contributor]) do |record|
+          record.points = 0
+        end
+        db_record.points = contributor_data[:points]
+        db_record.save
       end
-      db_record.points = contributor_data[:points]
-      db_record.save
     end
   end
 end
