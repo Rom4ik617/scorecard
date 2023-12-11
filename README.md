@@ -1,24 +1,50 @@
-# README
+<h1> Top Contributors app </h1>
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Information
 
-Things you may want to cover:
+"Top Contributors app" is a program for tracking who did the most work each week.
 
-* Ruby version
+## Features
 
-* System dependencies
+This application allows you:
 
-* Configuration
+* Display a weekly scorecard that highlights the top contributors to a GitHub repository.
+* Utilize the GitHub API to fetch events related to pull requests, comments, and reviews on a specified repository.
+* Assign points to different types of GitHub events, such as pull requests, pull request comments, and pull request reviews.
+* Identify and display the top contributors based on the total points they have accumulated in a given week.
+* Store weekly contributor information in the database, including their total points for each week.
 
-* Database creation
+## Getting started
 
-* Database initialization
+You need to have the following tools.
 
-* How to run the test suite
+- Ruby 3.1.3
+- Rails 7.1.2
+- Git
 
-* Services (job queues, cache servers, search engines, etc.)
+##### 1. Check out the repository
 
-* Deployment instructions
+```bash
+git clone https://github.com/Rom4ik617/scorecard.git
+cd scorecard
+```
 
-* ...
+##### 2. Create and setup the database and bundle
+
+Run the following commands to create and setup the database, and application libraries.
+
+```ruby
+rails db:create
+rails db:migrate
+bundle install
+```
+
+##### 3. Start the Rails server
+
+You can start the rails server with the following command.
+
+```ruby
+rails s
+```
+
+Now you can go to http://localhost:3000
